@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.wms.base.mapper.ShipperInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.wms.model.base.ShipperInfo">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="phone" column="phone" jdbcType="VARCHAR"/>
+            <result property="provinceId" column="province_id" jdbcType="BIGINT"/>
+            <result property="cityId" column="city_id" jdbcType="BIGINT"/>
+            <result property="areaId" column="area_id" jdbcType="BIGINT"/>
+            <result property="address" column="address" jdbcType="VARCHAR"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="createId" column="create_id" jdbcType="BIGINT"/>
+            <result property="createName" column="create_name" jdbcType="VARCHAR"/>
+            <result property="updateId" column="update_id" jdbcType="BIGINT"/>
+            <result property="updateName" column="update_name" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,phone,
+        province_id,city_id,area_id,
+        address,remark,status,
+        create_id,create_name,update_id,
+        update_name,create_time,update_time,
+        is_deleted
+    </sql>
+    <select id="shipperInfo" resultType="com.atguigu.wms.model.base.ShipperInfo">
+        SELECT si.name name,
+            si.is_deleted is_deleted,
+            si.id id,
+			si.phone phone,
+			si.province_id province_id,
+			si.city_id city_id,
+			si.area_id area_id,
+			si.address address,
+			si.remark remark,
+			si.status status,
+			di1.name province_name,
+			di2.name city_name,
+			di3.name area_name
+        FROM shipper_info si
+        LEFT JOIN dict_info di1
+        on si.province_id = di1.id
+        LEFT JOIN dict_info di2
+        on si.city_id = di2.id
+        LEFT JOIN dict_info di3
+        on si.area_id = di3.id
+        <where>
+            <if test="null != shipperInfoQueryVo.keyword and shipperInfoQueryVo.keyword !=''">
+                si.name like concat("%",#{shipperInfoQueryVo.keyword},"%")
+            </if>
+            <if test="null != shipperInfoQueryVo.keyword and shipperInfoQueryVo.keyword !=''">
+                or si.phone like concat("%",#{shipperInfoQueryVo.keyword},"%")
+            </if>
+            <if test="null != shipperInfoQueryVo.provinceId and shipperInfoQueryVo.provinceId !=''">
+                and #{shipperInfoQueryVo.provinceId} = si.province_id
+            </if>
+            <if test="null != shipperInfoQueryVo.cityId and shipperInfoQueryVo.cityId !=''">
+                and #{shipperInfoQueryVo.cityId} = si.city_id
+            </if>
+            <if test="null != shipperInfoQueryVo.areaId and shipperInfoQueryVo.areaId !=''">
+                and #{shipperInfoQueryVo.areaId} = si.area_id
+            </if>
+            and si.is_deleted = 0
+        </where>
+    </select>
+</mapper>
